@@ -269,7 +269,7 @@ public class DataGroupMember extends RaftMember {
       setLeader(null);
       setVoteFor(thisNode);
       updateHardState(term.get(), getVoteFor());
-      setLastHeartbeatReceivedTime(System.currentTimeMillis());
+      resetLastHeartbeatReceivedTime(System.currentTimeMillis());
       setCharacter(NodeCharacter.ELECTOR);
     }
 
@@ -746,7 +746,7 @@ public class DataGroupMember extends RaftMember {
           // if the leader is removed, also start an election immediately
           synchronized (term) {
             setCharacter(NodeCharacter.ELECTOR);
-            setLastHeartbeatReceivedTime(Long.MIN_VALUE);
+            resetLastHeartbeatReceivedTime(Long.MIN_VALUE);
           }
         }
       }

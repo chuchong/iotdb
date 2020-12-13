@@ -273,6 +273,22 @@ public class ClusterDescriptor {
         .getProperty("raft_log_buffer_size", String.valueOf(config.getRaftLogBufferSize())))
     );
 
+    config.setThreshold(Double.parseDouble(properties.
+                    getProperty("threshold", String.valueOf(config.getThreshold()))));
+
+    config.setMaxSampleSize(Integer.parseInt(properties.
+            getProperty("max_sample_size", String.valueOf(config.getMaxSampleSize()))));
+
+    config.setMinStdDeviationMillis(Double.parseDouble(properties.
+            getProperty("min_std_deviation_mills", String.valueOf(config.getMinStdDeviationMillis()))));
+
+    config.setAcceptableHeartbeatPauseMillis(Long.parseLong(properties.
+            getProperty("acceptable_heartbeat_pause_mills", String.valueOf(config.getAcceptableHeartbeatPauseMillis()))));
+
+    config.setFirstHeartbeatEstimateMillis(Long.parseLong(properties.
+            getProperty("first_heartbeat_estimate_mills",
+            String.valueOf(config.getFirstHeartbeatEstimateMillis()))));
+
     String consistencyLevel = properties.getProperty("consistency_level");
     if (consistencyLevel != null) {
       config.setConsistencyLevel(ConsistencyLevel.getConsistencyLevel(consistencyLevel));

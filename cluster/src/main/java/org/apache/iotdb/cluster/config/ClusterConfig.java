@@ -127,6 +127,14 @@ public class ClusterConfig {
 
   private int pullSnapshotRetryIntervalMs = 5 * 1000;
 
+  /*
+  Phi accrual
+   */
+  private double threshold = 16.0;
+  private int maxSampleSize = 200;
+  private double minStdDeviationMillis = 500;
+  private long acceptableHeartbeatPauseMillis = 0;
+  private long firstHeartbeatEstimateMillis = 500;
 
   public int getSelectorNumOfClientPool() {
     return selectorNumOfClientPool;
@@ -366,5 +374,45 @@ public class ClusterConfig {
 
   public void setPullSnapshotRetryIntervalMs(int pullSnapshotRetryIntervalMs) {
     this.pullSnapshotRetryIntervalMs = pullSnapshotRetryIntervalMs;
+  }
+
+  public double getThreshold() {
+    return threshold;
+  }
+
+  public void setThreshold(double threshold) {
+    this.threshold = threshold;
+  }
+
+  public int getMaxSampleSize() {
+    return maxSampleSize;
+  }
+
+  public void setMaxSampleSize(int maxSampleSize) {
+    this.maxSampleSize = maxSampleSize;
+  }
+
+  public double getMinStdDeviationMillis() {
+    return minStdDeviationMillis;
+  }
+
+  public void setMinStdDeviationMillis(double minStdDeviationMillis) {
+    this.minStdDeviationMillis = minStdDeviationMillis;
+  }
+
+  public long getAcceptableHeartbeatPauseMillis() {
+    return acceptableHeartbeatPauseMillis;
+  }
+
+  public void setAcceptableHeartbeatPauseMillis(long acceptableHeartbeatPauseMillis) {
+    this.acceptableHeartbeatPauseMillis = acceptableHeartbeatPauseMillis;
+  }
+
+  public long getFirstHeartbeatEstimateMillis() {
+    return firstHeartbeatEstimateMillis;
+  }
+
+  public void setFirstHeartbeatEstimateMillis(long firstHeartbeatEstimateMillis) {
+    this.firstHeartbeatEstimateMillis = firstHeartbeatEstimateMillis;
   }
 }
