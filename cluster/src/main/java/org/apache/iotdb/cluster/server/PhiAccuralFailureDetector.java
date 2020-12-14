@@ -125,21 +125,33 @@ public class PhiAccuralFailureDetector
         return phi(System.currentTimeMillis()) < threshold;
     }
 
-    public synchronized void heartbeat(long timestampMillis)
+    public LinkedList<Long> getHeartbeatHistory() {
+        return heartbeatHistory.intervals;
+    }
+
+    public synchronized void heartbeat(long timestampMillis, boolean append)
     {
         Long lastTimestampMillis = this.lastTimestampMillis.getAndSet(timestampMillis);
-        if (lastTimestampMillis != null) {
+        if (lastTimestampMillis != null && append) {
             long interval = timestampMillis - lastTimestampMillis;
-            if (isAvailable(timestampMillis)) {
+//            if (isAvailable(timestampMillis)) {
                 heartbeatHistory.add(interval);
-            }
+//            }
         }
     }
 
-    public void heartbeat()
-    {
-        heartbeat(System.currentTimeMillis());
-    }
+//    public synchronized  void appendTimeMill(long interval)
+//    {
+//        if (isAvailable(timestampMillis)) {
+//                heartbeatHistory.add(interval);
+//        }
+//    }
+
+
+//    public void heartbeat()
+//    {
+//        heartbeat(System.currentTimeMillis());
+//    }
 
     public static class Builder
     {
