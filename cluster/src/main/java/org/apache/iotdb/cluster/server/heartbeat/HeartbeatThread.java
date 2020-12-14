@@ -81,7 +81,7 @@ public class HeartbeatThread implements Runnable {
           case LEADER:
             // send heartbeats to the followers
             sendHeartbeats();
-            Thread.sleep( RaftServer.getConnectionTimeoutInMS() * 5);
+            Thread.sleep( RaftServer.getHeartBeatIntervalMs());
             break;
           case FOLLOWER:
             // check if heartbeat times out
