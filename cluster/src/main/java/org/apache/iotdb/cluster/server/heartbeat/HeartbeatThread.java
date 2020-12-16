@@ -85,11 +85,11 @@ public class HeartbeatThread implements Runnable {
             break;
           case FOLLOWER:
             // check if heartbeat times out
-            long heartBeatTime = System.currentTimeMillis();
-            long heartBeatInterval =  heartBeatTime - localMember
+            long checkTime = System.currentTimeMillis();
+            long heartBeatInterval =  checkTime - localMember
                 .getLastHeartbeatReceivedTime();
             // TODO: parameterization
-            if (!localMember.isAvailable(heartBeatTime)) {
+            if (!localMember.isAvailable(checkTime)) {
 //            if (heartBeatInterval >= RaftServer.getConnectionTimeoutInMS()) {
               // the leader is considered dead, an election will be started in the next loop
 //              detector.heartbeat(heartBeatTime);

@@ -354,7 +354,8 @@ public class DataGroupMember extends RaftMember {
           metaGroupMember.getLogManager().getLastLogIndex(), thatMetaLastLogTerm,
           metaGroupMember.getLogManager().getLastLogTerm());
       setCharacter(NodeCharacter.FOLLOWER);
-      lastHeartbeatReceivedTime = System.currentTimeMillis();
+      resetLastHeartbeatReceivedTime(System.currentTimeMillis());
+      //lastHeartbeatReceivedTime = System.currentTimeMillis();
       setVoteFor(electionRequest.getElector());
       updateHardState(thatTerm, getVoteFor());
     } else {
@@ -746,7 +747,7 @@ public class DataGroupMember extends RaftMember {
           // if the leader is removed, also start an election immediately
           synchronized (term) {
             setCharacter(NodeCharacter.ELECTOR);
-            resetLastHeartbeatReceivedTime(Long.MIN_VALUE);
+            lastHeartbeatReceivedTime = Long.MIN_VALUE;
           }
         }
       }
