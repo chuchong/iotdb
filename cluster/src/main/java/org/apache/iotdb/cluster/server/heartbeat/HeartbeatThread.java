@@ -40,7 +40,7 @@ import org.apache.iotdb.cluster.utils.ClientUtils;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.iotdb.cluster.server.PhiAccuralFailureDetector;
 /**
  * HeartbeatThread takes the responsibility to send heartbeats (when this node is a leader), check
  * if the leader is still online (when this node is a follower) or start elections (when this node
@@ -61,6 +61,7 @@ public class HeartbeatThread implements Runnable {
   HeartbeatThread(RaftMember localMember) {
     this.localMember = localMember;
     memberName = localMember.getName();
+//    detector = new PhiAccuralFailureDetector.Builder().build();
   }
 
   @Override
@@ -86,10 +87,14 @@ public class HeartbeatThread implements Runnable {
             break;
           case FOLLOWER:
             // check if heartbeat times out
-            long heartBeatInterval = System.currentTimeMillis() - localMember
+            long checkTime = System.currentTimeMillis();
+            long heartBeatInterval =  checkTime - localMember
                 .getLastHeartbeatReceivedTime();
-            if (heartBeatInterval >= RaftServer.getConnectionTimeoutInMS()) {
+            // TODO: parameterization
+            if (!localMember.isAvailable(checkTime)) {
+//            if (heartBeatInterval >= RaftServer.getConnectionTimeoutInMS()) {
               // the leader is considered dead, an election will be started in the next loop
+//              detector.heartbeat(heartBeatTime);
               logger.info("{}: The leader {} timed out", memberName, localMember.getLeader());
               localMember.setCharacter(NodeCharacter.ELECTOR);
               localMember.setLeader(ClusterConstant.EMPTY_NODE);
@@ -253,7 +258,7 @@ public class HeartbeatThread implements Runnable {
       }
     }
     // take the election request as the first heartbeat
-    localMember.setLastHeartbeatReceivedTime(System.currentTimeMillis());
+    localMember.resetLastHeartbeatReceivedTime(System.currentTimeMillis());
   }
 
   /**
