@@ -307,6 +307,10 @@ public class ClusterDescriptor {
             getProperty("first_heartbeat_estimate_mills",
             String.valueOf(config.getFirstHeartbeatEstimateMillis()))));
 
+    config.setFailureDetectorType(Integer.parseInt(properties.
+            getProperty("failure_detector_type",
+            String.valueOf(config.getFailureDetectorType()))));
+
     String consistencyLevel = properties.getProperty("consistency_level");
     if (consistencyLevel != null) {
       config.setConsistencyLevel(ConsistencyLevel.getConsistencyLevel(consistencyLevel));

@@ -162,8 +162,21 @@ public class ClusterConfig {
    */
   private boolean waitForSlowNode = true;
   /*
-  Phi accrual
+  failure detector type
    */
+  private int failureDetectorType = 0;
+
+  public void setFailureDetectorType(int failureDetectorType) {
+    this.failureDetectorType = failureDetectorType;
+  }
+
+  public int getFailureDetectorType() {
+    return failureDetectorType;
+  }
+
+  /*
+      Phi accrual
+       */
   private double threshold = 16.0;
   private int maxSampleSize = 200;
   private double minStdDeviationMillis = 500;
@@ -448,6 +461,7 @@ public class ClusterConfig {
 
   public void setWaitForSlowNode(boolean waitForSlowNode) {
     this.waitForSlowNode = waitForSlowNode;
+  }
   public double getThreshold() {
     return threshold;
   }

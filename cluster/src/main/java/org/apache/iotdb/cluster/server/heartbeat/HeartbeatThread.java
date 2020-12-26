@@ -91,7 +91,9 @@ public class HeartbeatThread implements Runnable {
             long heartBeatInterval =  checkTime - localMember
                 .getLastHeartbeatReceivedTime();
             // TODO: parameterization
-            if (!localMember.isAvailable(checkTime)) {
+            int failureDetectorType = ClusterDescriptor.getInstance().getConfig().getFailureDetectorType();
+            if ((failureDetectorType == 1 && !localMember.isAvailable(checkTime))
+                    || (failureDetectorType == 0 && heartBeatInterval >= RaftServer.getConnectionTimeoutInMS())) {
 //            if (heartBeatInterval >= RaftServer.getConnectionTimeoutInMS()) {
               // the leader is considered dead, an election will be started in the next loop
 //              detector.heartbeat(heartBeatTime);

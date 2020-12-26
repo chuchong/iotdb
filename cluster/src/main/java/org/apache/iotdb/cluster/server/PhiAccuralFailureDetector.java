@@ -7,7 +7,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * This is a port of https://github.com/akka/akka/blob/master/akka-remote/src/main/scala/akka/remote/PhiAccrualFailureDetector.scala
+ * written by course Big Data team 1
+ * The phi detector refers to akka scala version https://github.com/akka/akka/blob/master/akka-remote/src/main/scala/akka/remote/PhiAccrualFailureDetector.scala
  *
  * Implementation of 'The Phi Accrual Failure Detector' by Hayashibara et al. as defined in their paper:
  * [http://ddg.jaist.ac.jp/pub/HDY+04.pdf]
@@ -89,7 +90,7 @@ public class PhiAccuralFailureDetector
         return Math.max(stdDeviationMillis, minStdDeviationMillis);
     }
 
-    public synchronized double phi(long timestampMillis)
+    private synchronized double phi(long timestampMillis)
     {
         Long lastTimestampMillis = this.lastTimestampMillis.get();
         if (lastTimestampMillis == null) {
@@ -101,7 +102,7 @@ public class PhiAccuralFailureDetector
         double stdDeviationMillis = ensureValidStdDeviation(heartbeatHistory.stdDeviation());
 
         double y = (timeDiffMillis - meanMillis) / stdDeviationMillis;
-        double e = Math.exp(-y * (1.5976 + 0.070566 * y * y));
+        double e = Math.exp(-y * (1.5976 + 0.070566 * y * y));/* magic number from akka to simulate cumulative func of gaussian distribution*/
         if (timeDiffMillis > meanMillis) {
             return -Math.log10(e / (1.0 + e));
         }
@@ -110,19 +111,9 @@ public class PhiAccuralFailureDetector
         }
     }
 
-    public synchronized double phi()
-    {
-        return phi(System.currentTimeMillis());
-    }
-
     public boolean isAvailable(long timestampMillis)
     {
         return phi(timestampMillis) < threshold;
-    }
-
-    public boolean isAvailable()
-    {
-        return phi(System.currentTimeMillis()) < threshold;
     }
 
     public LinkedList<Long> getHeartbeatHistory() {
@@ -134,24 +125,9 @@ public class PhiAccuralFailureDetector
         Long lastTimestampMillis = this.lastTimestampMillis.getAndSet(timestampMillis);
         if (lastTimestampMillis != null && append) {
             long interval = timestampMillis - lastTimestampMillis;
-//            if (isAvailable(timestampMillis)) {
-                heartbeatHistory.add(interval);
-//            }
+            heartbeatHistory.add(interval);
         }
     }
-
-//    public synchronized  void appendTimeMill(long interval)
-//    {
-//        if (isAvailable(timestampMillis)) {
-//                heartbeatHistory.add(interval);
-//        }
-//    }
-
-
-//    public void heartbeat()
-//    {
-//        heartbeat(System.currentTimeMillis());
-//    }
 
     public static class Builder
     {
@@ -160,36 +136,6 @@ public class PhiAccuralFailureDetector
         private double minStdDeviationMillis = ClusterDescriptor.getInstance().getConfig().getMinStdDeviationMillis();
         private long acceptableHeartbeatPauseMillis = ClusterDescriptor.getInstance().getConfig().getAcceptableHeartbeatPauseMillis();
         private long firstHeartbeatEstimateMillis = ClusterDescriptor.getInstance().getConfig().getFirstHeartbeatEstimateMillis();
-
-        public Builder setThreshold(double threshold)
-        {
-            this.threshold = threshold;
-            return this;
-        }
-
-        public Builder setMaxSampleSize(int maxSampleSize)
-        {
-            this.maxSampleSize = maxSampleSize;
-            return this;
-        }
-
-        public Builder setMinStdDeviationMillis(double minStdDeviationMillis)
-        {
-            this.minStdDeviationMillis = minStdDeviationMillis;
-            return this;
-        }
-
-        public Builder setAcceptableHeartbeatPauseMillis(long acceptableHeartbeatPauseMillis)
-        {
-            this.acceptableHeartbeatPauseMillis = acceptableHeartbeatPauseMillis;
-            return this;
-        }
-
-        public Builder setFirstHeartbeatEstimateMillis(long firstHeartbeatEstimateMillis)
-        {
-            this.firstHeartbeatEstimateMillis = firstHeartbeatEstimateMillis;
-            return this;
-        }
 
         public PhiAccuralFailureDetector build()
         {
